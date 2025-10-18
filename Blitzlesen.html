@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blitzlesen – 4. Klasse</title>
+<style>
+:root{
+  --background: #fff7e6; /* creme */
+  --text: #0b3d2e;       /* dunkelgrün */
+  --accent: #2f6b54;
+  --button-bg: #2f6b54;
+  --button-bg-hover: #23503f;
+  --radius: 12px;
+}
+html,body{
+  height:100%;
+  margin:0;
+  padding:0;
+  background:var(--background);
+  font-family: "Comic Sans MS", "Trebuchet MS", "Verdana", "Arial", sans-serif;
+  color:var(--text);
+}
+.center {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:1rem;
+  box-sizing:border-box;
+}
+h1 { margin:0 0 .25rem 0; font-size:1.8rem; letter-spacing:1px; }
+p.lead { margin:.2rem 0 1rem 0; font-size:1rem; opacity:.9; }
+.btn {
+  display:inline-block;
+  margin:.5rem;
+  padding:.9rem 1.6rem;
+  font-size:1.25rem;
+  border:none;
+  border-radius:var(--radius);
+  background:var(--button-bg);
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  touch-action: manipulation;
+}
+.btn:active { transform: translateY(1px); }
+.btn:hover { background:var(--button-bg-hover); cursor:pointer; }
+#wort {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:50vh;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+#wort .text {
+  font-weight:700;
+  line-height:1;
+  font-size: clamp(48px, 40vh, 220px);
+  word-break: break-word;
+  padding: .2rem .5rem;
+  letter-spacing: 0.5px;
+}
+#frageBlock { margin-top:1rem; display:flex; flex-direction:column; align-items:center; gap:.6rem; }
+.small { font-size:1rem; opacity:.95; }
+#antwort {
+  margin-top:.6rem;
+  font-size:1.4rem;
+  font-weight:700;
+}
+.controls {
+  margin-top:1rem;
+  display:flex;
+  gap:.6rem;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+button, .btn { min-width:110px; min-height:48px; }
+.topnote {
+  position:fixed;
+  top:12px;
+  right:12px;
+  background: rgba(11,61,46,0.06);
+  color:var(--text);
+  border-radius:8px;
+  padding:6px 10px;
+  font-size:.85rem;
+}
+@media (min-width:900px){
+  #wort { height:60vh; }
+}
+</style>
+</head>
+<body>
+<div class="topnote">Blitzlesen — 4. Klasse</div>
+
+<main class="center">
+<section id="start">
+  <h1>🧠 Blitzlesen</h1>
+  <p class="lead">Wähle die Schwierigkeit. Danach läuft ein zufälliges Level.</p>
+  <div>
+    <button class="btn" id="startEasy">Einfach (4 Wörter, 2 s)</button>
+    <button class="btn" id="startHard">Schwierig (6 Wörter, 1 s)</button>
+  </div>
+</section>
+
+<section id="uebung" style="display:none;">
+  <div id="wort"><div class="text" id="wortText"></div></div>
+</section>
+
+<section id="frageBlock" style="display:none;">
+  <div id="frage" class="small"></div>
+  <div>
+    <button class="btn" id="btnJa">Ja</button>
+    <button class="btn" id="btnNein">Nein</button>
+  </div>
+  <div id="antwort"></div>
+  <div class="controls">
+    <button class="btn" id="nochmal">Nochmal</button>
+    <button class="btn" id="zurueck">Zurück</button>
+  </div>
+</section>
+</main>
+
+<script>
+const easyLevels = [
+  ["Hausaufgabe","Ball","Blumenvase","laufen"],
+  ["Tischlampe","Lampe","spielen","bunt"],
+  ["Tag","Regenwolke","springen","Sonne"],
+  ["singen","laufen","Blume","schnellwachsend"],
+  ["Auto","Katze","laut","Springbrunnen"],
+  ["malen","Stuhlbein","Fenster","klein"],
+  ["warm","Boot","laufen","Hund"],
+  ["Brot","kalt","essen","Milchtüte"],
+  ["hüpfen","bunt","Garten","Baumstamm"],
+  ["Sonne","springen","stark","See"]
+];
+
+const hardLevels = [
+  ["Schule","Fensterbank","verstehen","spielen","glücklich","vorsichtig"],
+  ["Baumhaus","Kamera","erklären","laufen","neugierig","ruhig"],
+  ["Rucksack","Straßenlaterne","forschen","springen","aufgeregt","stark"],
+  ["Lehrerin","Schüler","schreiben","lesen","vorsichtig","neugierig"],
+  ["Bibliothek","Sporthalle","basteln","rechnen","aufmerksam","schnell"],
+  ["Sternbild","Himmel","beobachten","messen","hell","dunkel"],
+  ["Freundschaft","Abenteuer","entdecken","erklären","froh","mutig"],
+  ["Protokoll","Technik","analysieren","konstruieren","komplex","sorgfältig"],
+  ["Geschichte","Projekt","forschen","experimentieren","spannend","schwierig"],
+  ["Mathematik","Kunst","zeichnen","malen","kreativ","schnell"]
+];
+
+const easyDistractors = ["Himmel","Eis","Zug","Fisch","Stuhl","Hund","Garten","Boot","Stift","Regen"];
+const hardDistractors = ["Symmetrie","Experiment","Theorie","Phänomen","Protokoll","Phantasie","Operation","Analyse","Konstruktion","Intelligenz","Technik","Philosophie"];
+
+let currentMode = null;
+let currentLevelWords = [];
+let displayDuration = 1500;
+let levelIndex = 0;
+let zielwort = "";
+
+const startEl = document.getElementById('start');
+const uebungEl = document.getElementById('uebung');
+const frageBlock = document.getElementById('frageBlock');
+const wortText = document.getElementById('wortText');
+const frageEl = document.getElementById('frage');
+const antwortEl = document.getElementById('antwort');
+
+document.getElementById('startEasy').addEventListener('click', ()=> launchMode('einfach'));
+document.getElementById('startHard').addEventListener('click', ()=> launchMode('schwierig'));
+document.getElementById('btnJa').addEventListener('click', ()=> checkAnswer(true));
+document.getElementById('btnNein').addEventListener('click', ()=> checkAnswer(false));
+document.getElementById('nochmal').addEventListener('click', ()=> restartSameMode());
+document.getElementById('zurueck').addEventListener('click', ()=> goBack());
+
+function launchMode(mode){
+  currentMode = mode;
+  displayDuration = (mode==='einfach') ? 2000 : 1000;
+  startEl.style.display = 'none';
+  frageBlock.style.display = 'none';
+  antwortEl.textContent = '';
+  pickRandomLevelAndStart();
+}
+
+function pickRandomLevelAndStart(){
+  if(currentMode === 'einfach'){
+    const idx = Math.floor(Math.random()*easyLevels.length);
+    currentLevelWords = easyLevels[idx].slice();
+  } else {
+    const idx = Math.floor(Math.random()*hardLevels.length);
+    currentLevelWords = hardLevels[idx].slice();
+  }
+  levelIndex = 0;
+  uebungEl.style.display = 'block';
+  frageBlock.style.display = 'none';
+  wortText.textContent = '';
+  if(Math.random() < 0.5){
+    zielwort = currentLevelWords[Math.floor(Math.random()*currentLevelWords.length)];
+  } else {
+    const pool = (currentMode === 'einfach') ? easyDistractors : hardDistractors;
+    const candidates = pool.filter(w => !currentLevelWords.includes(w));
+    zielwort = candidates[Math.floor(Math.random()*candidates.length)];
+  }
+  setTimeout(showNextWord, 350);
+}
+
+function showNextWord(){
+  if(levelIndex < currentLevelWords.length){
+    wortText.textContent = currentLevelWords[levelIndex];
+    levelIndex++;
+    setTimeout(showNextWord, displayDuration);
+  } else {
+    uebungEl.style.display = 'none';
+    frageBlock.style.display = 'block';
+    frageEl.textContent = `War das Wort "${zielwort}" dabei?`;
+    antwortEl.textContent = '';
+  }
+}
+
+function checkAnswer(userSaysYes){
+  const actuallyPresent = currentLevelWords.includes(zielwort);
+  const correct = (userSaysYes && actuallyPresent) || (!userSaysYes && !actuallyPresent);
+  if(correct){
+    antwortEl.textContent = '✅ Richtig!';
+  } else {
+    antwortEl.textContent = '❌ Falsch.';
+    setTimeout(()=>{
+      if(actuallyPresent){
+        antwortEl.textContent += ` Das Wort "${zielwort}" wurde gezeigt.`;
+      } else {
+        antwortEl.textContent += ` Richtige Wörter: ${currentLevelWords.join(', ')}.`;
+      }
+    }, 300);
+  }
+}
+
+function restartSameMode(){
+  antwortEl.textContent = '';
+  pickRandomLevelAndStart();
+}
+
+function goBack(){
+  currentMode = null;
+  currentLevelWords = [];
+  zielwort = "";
+  levelIndex = 0;
+  uebungEl.style.display = 'none';
+  frageBlock.style.display = 'none';
+  startEl.style.display = 'block';
+  wortText.textContent = '';
+  antwortEl.textContent = '';
+}
+</script>
+</body>
+</html>
