@@ -31,22 +31,33 @@ html,body{
   padding:1rem;
   box-sizing:border-box;
 }
-h1 { margin:0 0 .25rem 0; font-size:3.06rem; letter-spacing:1px; }
-p.lead { margin:.2rem 0 1rem 0; font-size:1.7rem; opacity:.9; }
+h1 {
+  margin: 0 0 .25rem 0;
+  font-size: clamp(2rem, 5vw, 3.06rem); /* Dynamische Schriftgröße */
+  letter-spacing: 1px;
+}
+
+p.lead {
+  margin: .2rem 0 1rem 0;
+  font-size: clamp(1rem, 3vw, 1.7rem); /* Dynamische Schriftgröße */
+  opacity: .9;
+}
+
 .btn {
-  display:inline-block;
-  margin:.5rem;
-  padding:.9rem 1.6rem;
-  font-size:2.125rem;
-  border:none;
-  border-radius:var(--radius);
-  background:var(--button-bg);
+  display: inline-block;
+  margin: .5rem;
+  padding: .9rem 1.6rem;
+  font-size: clamp(1.5rem, 4vw, 2.125rem); /* Dynamische Schriftgröße */
+  border: none;
+  border-radius: var(--radius);
+  background: var(--button-bg);
   color: #fff;
   box-shadow: 0 4px 8px rgba(0,0,0,0.08);
   touch-action: manipulation;
 }
 .btn:active { transform: translateY(1px); }
 .btn:hover { background:var(--button-bg-hover); cursor:pointer; }
+
 #wort {
   display:flex;
   align-items:center;
@@ -56,24 +67,28 @@ p.lead { margin:.2rem 0 1rem 0; font-size:1.7rem; opacity:.9; }
   user-select:none;
   -webkit-user-select:none;
   -webkit-tap-highlight-color: transparent;
+  overflow-wrap: break-word; /* Zeilenumbruch nach Wortgrenzen */
 }
+
 #wort .text {
   font-weight:700;
   line-height:1;
-  font-size: clamp(48px, 40vh, 220px);
+  font-size: clamp(2rem, 10vw, 12rem); /* Dynamische Schriftgröße passend zum Container */
   word-break: break-word;
   padding: .2rem .5rem;
   letter-spacing: 0.5px;
 }
+
 #frageBlock { margin-top:1rem; display:flex; flex-direction:column; align-items:center; gap:.6rem; }
 #frage {
-  font-size:1.7rem;
+  font-size: clamp(1rem, 3vw, 1.7rem);
 }
 #antwort {
   margin-top:.6rem;
-  font-size:2.38rem;
+  font-size: clamp(1.5rem, 4vw, 2.38rem);
   font-weight:700;
 }
+
 .controls {
   margin-top:1rem;
   display:flex;
@@ -81,7 +96,9 @@ p.lead { margin:.2rem 0 1rem 0; font-size:1.7rem; opacity:.9; }
   flex-wrap:wrap;
   justify-content:center;
 }
+
 button, .btn { min-width:110px; min-height:48px; }
+
 .topnote {
   position:fixed;
   top:12px;
@@ -92,6 +109,7 @@ button, .btn { min-width:110px; min-height:48px; }
   padding:6px 10px;
   font-size:.85rem;
 }
+
 @media (min-width:900px){
   #wort { height:60vh; }
 }
@@ -296,3 +314,4 @@ function goBack(){
 </script>
 </body>
 </html>
+
