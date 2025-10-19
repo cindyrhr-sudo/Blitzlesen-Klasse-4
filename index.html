@@ -46,14 +46,16 @@ p.lead {
 .btn {
   display: inline-block;
   margin: .5rem;
-  padding: .9rem 1.6rem;
-  font-size: clamp(1.5rem, 4vw, 2.125rem); /* Dynamische Schriftgröße */
+  padding: clamp(0.6rem, 1.5vw, 0.9rem) clamp(1rem, 3vw, 1.6rem); /* dynamisches Padding */
+  font-size: clamp(1.5rem, 4vw, 2.125rem); /* dynamische Schriftgröße */
   border: none;
   border-radius: var(--radius);
   background: var(--button-bg);
   color: #fff;
   box-shadow: 0 4px 8px rgba(0,0,0,0.08);
   touch-action: manipulation;
+  min-width: 110px;
+  min-height: 48px;
 }
 .btn:active { transform: translateY(1px); }
 .btn:hover { background:var(--button-bg-hover); cursor:pointer; }
@@ -97,8 +99,6 @@ p.lead {
   justify-content:center;
 }
 
-button, .btn { min-width:110px; min-height:48px; }
-
 .topnote {
   position:fixed;
   top:12px;
@@ -114,6 +114,7 @@ button, .btn { min-width:110px; min-height:48px; }
   #wort { height:60vh; }
 }
 </style>
+
 </head>
 <body>
 <div class="topnote">Blitzlesen — 4. Klasse</div>
@@ -314,4 +315,5 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
